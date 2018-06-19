@@ -54,13 +54,17 @@ func main() {
 			Action: func(context *cli.Context) error {
 				now := time.Now()
 				service := context.Args().Get(0)
+				if service == "" {
+					msg := "Enter a service name."
+					return errors.New(msg)
+				}
 				for _, cfg := range config.Service {
 					if cfg.Name == service {
 						token, _ := totp.GenerateCode(cfg.Secret, now)
 						fmt.Println(token)
 						break
 					}
-					msg := service + " does not exist."
+					msg := "Service \"" + service + "\" not found."
 					return errors.New(msg)
 				}
 				return nil
