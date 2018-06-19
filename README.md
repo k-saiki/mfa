@@ -6,15 +6,15 @@ Generate TOTP(Time-based One-time Password) token with CLI.
 Create config at `$HOME/.mfa/secrets`.
 ```toml
 [[service]]
-Name = "amazon"
+name = "amazon"
 secret = "your secret key"
 
 [[service]]
-Name = "google"
+name = "google"
 secret = "your secret key"
 
 [[service]]
-Name = "github"
+name = "github"
 secret = "your secret key"
 ```
 
