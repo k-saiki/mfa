@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/k-saiki/mfa.svg?style=svg)](https://circleci.com/gh/k-saiki/mfa)
+
 # mfa
 Generate TOTP(Time-based One-time Password) token with CLI.
 
