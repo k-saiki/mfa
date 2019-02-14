@@ -6,6 +6,8 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.11
+        environment:
+          GO111MODULE: on
     working_directory: /go/src/github.com/k-saiki/mfa
     steps:
       - checkout
