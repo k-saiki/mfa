@@ -8,12 +8,12 @@ Generate TOTP(Time-based One-time Password) token with CLI.
 Create config at `$HOME/.mfa/secrets` in YAML.
 ```yaml
 service:
-  - name = "amazon"
-    secret = "your secret key"
-  - name = "google"
-    secret = "your secret key"
-  - name = "github"
-    secret = "your secret key"
+  - name: "amazon"
+    secret: "your secret key"
+  - name: "google"
+    secret: "your secret key"
+  - name: "github"
+    secret: "your secret key"
 ```
 
 ### Generate token
