@@ -5,19 +5,15 @@ Generate TOTP(Time-based One-time Password) token with CLI.
 
 ## Usage
 ### Configuration
-Create config at `$HOME/.mfa/secrets`.
-```toml
-[[service]]
-name = "amazon"
-secret = "your secret key"
-
-[[service]]
-name = "google"
-secret = "your secret key"
-
-[[service]]
-name = "github"
-secret = "your secret key"
+Create config at `$HOME/.mfa/secrets` in YAML.
+```yaml
+service:
+  - name = "amazon"
+    secret = "your secret key"
+  - name = "google"
+    secret = "your secret key"
+  - name = "github"
+    secret = "your secret key"
 ```
 
 ### Generate token
@@ -36,5 +32,5 @@ github
 
 ## Install
 ```bash
-go get github.com/k-saiki/mfa
+go get -u github.com/k-saiki/mfa
 ```

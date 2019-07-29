@@ -3,26 +3,27 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"time"
 
-	"github.com/BurntSushi/toml"
 	"github.com/mitchellh/go-homedir"
 	"github.com/pquerna/otp/totp"
 	"github.com/urfave/cli"
+	"gopkg.in/yaml.v2"
 )
 
 const configDefault = ".mfa/secrets"
 
 type Config struct {
-	Service []MFAConfig `toml:"service"`
+	Services []Service `yaml:"service"`
 }
 
-type MFAConfig struct {
-	Name   string `toml:"name"`
-	Secret string `toml:"secret"`
+type Service struct {
+	Name   string `yaml:"name"`
+	Secret string `yaml:"secret"`
 }
 
 func main() {
@@ -42,8 +43,8 @@ func main() {
 			Name:  "list",
 			Usage: "List configured services.",
 			Action: func(context *cli.Context) error {
-				for _, cfg := range config.Service {
-					fmt.Printf("%s\n", cfg.Name)
+				for _, s := range config.Services {
+					fmt.Println(s.Name)
 				}
 				return nil
 			},
@@ -58,16 +59,17 @@ func main() {
 					msg := "Enter a service name."
 					return errors.New(msg)
 				}
-				for _, cfg := range config.Service {
-					if cfg.Name == service {
-						token, _ := totp.GenerateCode(cfg.Secret, now)
+
+				for _, s := range config.Services {
+					if s.Name == service {
+						token, _ := totp.GenerateCode(s.Secret, now)
 						fmt.Println(token)
-						break
+						os.Exit(0)
 					}
-					msg := "Service \"" + service + "\" not found."
-					return errors.New(msg)
 				}
-				return nil
+
+				msg := "Service \"" + service + "\" not found."
+				return errors.New(msg)
 			},
 		},
 	}
@@ -78,15 +80,20 @@ func main() {
 	}
 }
 
-func loadConfig(configPath string, config *Config) error {
+func loadConfig(t string, c *Config) error {
 	homeDir, err := homedir.Dir()
 	if err != nil {
 		return err
 	}
 
-	configFullPath := filepath.Join(homeDir, configPath)
+	configFullPath := filepath.Join(homeDir, t)
+	buf, err := ioutil.ReadFile(configFullPath)
+	if err != nil {
+		return err
+	}
 
-	if _, err := toml.DecodeFile(configFullPath, config); err != nil {
+	err = yaml.Unmarshal(buf, &c)
+	if err != nil {
 		return err
 	}
 
