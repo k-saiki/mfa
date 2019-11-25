@@ -3,6 +3,11 @@
 # mfa
 Generate TOTP(Time-based One-time Password) token with CLI.
 
+## Installing
+```bash
+go get -u github.com/k-saiki/mfa
+```
+
 ## Usage
 ### Configuration
 Create config at `$HOME/.mfa/secrets` in YAML.
@@ -30,7 +35,12 @@ google
 github
 ```
 
-## Install
+## Use case
+[direnv](https://github.com/direnv/direnv) with [assume-role](https://github.com/remind101/assume-role)
 ```bash
-go get -u github.com/k-saiki/mfa
+$ echo 'eval $(mfa gen aws | assume-role ${PROFILE_NAME})' > .envrc
+$ direnv allow
+direnv: loading .envrc
+MFA code:
+direnv: export +ASSUMED_ROLE +AWS_ACCESS_KEY_ID +AWS_SECRET_ACCESS_KEY +AWS_SECURITY_TOKEN +AWS_SESSION_TOKEN
 ```
