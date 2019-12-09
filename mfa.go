@@ -11,7 +11,7 @@ import (
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/pquerna/otp/totp"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v2"
 )
 
@@ -28,21 +28,22 @@ type Service struct {
 
 func main() {
 	var config Config
-	if err := loadConfig(configDefault, &config); err != nil {
-		log.Fatal(err)
-	}
 
 	app := cli.NewApp()
 	app.EnableBashCompletion = true
 	app.Name = "mfa"
 	app.Usage = "Generate TOTP(Time-based One-time Password) token."
-	app.Version = "0.0.1"
+	app.Version = "0.0.2"
 
-	app.Commands = []cli.Command{
+	app.Commands = []*cli.Command{
 		{
 			Name:  "list",
-			Usage: "List configured services.",
+			Usage: "List configured services",
 			Action: func(context *cli.Context) error {
+				if err := loadConfig(configDefault, &config); err != nil {
+					log.Fatal(err)
+				}
+
 				for _, s := range config.Services {
 					fmt.Println(s.Name)
 				}
@@ -53,10 +54,14 @@ func main() {
 			Name:  "gen",
 			Usage: "Generate TOTP token.",
 			Action: func(context *cli.Context) error {
+				if err := loadConfig(configDefault, &config); err != nil {
+					log.Fatal(err)
+				}
+
 				now := time.Now()
 				service := context.Args().Get(0)
 				if service == "" {
-					msg := "Enter a service name."
+					msg := "Enter a service name"
 					return errors.New(msg)
 				}
 
@@ -68,7 +73,7 @@ func main() {
 					}
 				}
 
-				msg := "Service \"" + service + "\" not found."
+				msg := "[ERROR] Service \"" + service + "\" not found."
 				return errors.New(msg)
 			},
 		},
