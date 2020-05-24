@@ -1,16 +1,13 @@
-[![CircleCI](https://circleci.com/gh/k-saiki/mfa.svg?style=svg)](https://circleci.com/gh/k-saiki/mfa)
-
 # mfa
 Generate TOTP(Time-based One-time Password) token with CLI.
 
-## Installing
+## Installation
 ```bash
-go get -u github.com/k-saiki/mfa
+$ go get -u github.com/k-saiki/mfa
 ```
 
-## Usage
-### Configuration
-Create config at `$HOME/.mfa/secrets` in YAML.
+## Configuration
+Default config is `$HOME/.mfa/secrets` in yaml format.
 ```yaml
 service:
   - name: "amazon"
@@ -21,6 +18,12 @@ service:
     secret: "your secret key"
 ```
 
+You can change config file path to use environment variable.
+```bash
+$ export MFA_CONFIG=/path/to/file
+```
+
+## Usage
 ### Generate token
 ```bash
 $ mfa gen amazon
@@ -36,11 +39,14 @@ github
 ```
 
 ## Use case
-[direnv](https://github.com/direnv/direnv) with [assume-role](https://github.com/remind101/assume-role)
+[assume-role](https://github.com/remind101/assume-role) with [direnv](https://github.com/direnv/direnv).
 ```bash
-$ echo 'eval $(mfa gen aws | assume-role ${PROFILE_NAME})' > .envrc
+$ echo 'eval $(mfa gen aws | assume-role <profile name>)' > .envrc
 $ direnv allow
 direnv: loading .envrc
 MFA code:
 direnv: export +ASSUMED_ROLE +AWS_ACCESS_KEY_ID +AWS_SECRET_ACCESS_KEY +AWS_SECURITY_TOKEN +AWS_SESSION_TOKEN
 ```
+
+## TODO
+- Add test
