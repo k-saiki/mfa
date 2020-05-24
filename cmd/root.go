@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -23,12 +23,13 @@ var config Config
 
 var rootCmd = &cobra.Command{
 	Use:   "mfa",
-	Short: "Generate a TOTP(Time-based One-time Password) token",
+	Short: "Generate a totp token with cli.",
 }
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal(err)
+		fmt.Printf("Error: %s\n", err)
+		os.Exit(1)
 	}
 }
 
@@ -37,34 +38,29 @@ func init() {
 }
 
 func initConfig() {
-	// Find home directory.
-	home, err := homedir.Dir()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Default config is "$HOME/.mfa/secrets" or use environment variables to override config file path.
 	viper.SetConfigType("yaml")
-	viper.BindEnv("MFA_CONFIG")
 
-	if viper.Get("MFA_CONFIG") != nil {
-		configPath := filepath.Dir(viper.GetString("MFA_CONFIG"))
-		filename := filepath.Base(viper.GetString("MFA_CONFIG"))
-		viper.AddConfigPath(configPath)
-		viper.SetConfigName(filename)
+	if os.Getenv("MFA_CONFIG") != "" {
+		viper.SetConfigFile(os.Getenv("MFA_CONFIG"))
 	} else {
+		home, err := homedir.Dir()
+		if err != nil {
+			fmt.Printf("Error: %s\n", err)
+			os.Exit(1)
+		}
+
 		configPath := filepath.Join(home, ".mfa")
 		viper.AddConfigPath(configPath)
 		viper.SetConfigName("secrets")
 	}
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Printf("[ERROR] %s", err)
-		os.Exit(-1)
+		fmt.Printf("Error: %s\n", err)
+		os.Exit(1)
 	}
 
 	if err := viper.UnmarshalExact(&config); err != nil {
-		log.Printf("[ERROR] %s", err)
-		os.Exit(-1)
+		fmt.Printf("Error: %s\n", err)
+		os.Exit(1)
 	}
 }
