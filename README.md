@@ -2,9 +2,8 @@
 Generate TOTP(Time-based One-time Password) token with CLI.
 
 ## Installation
-```bash
-$ go get -u github.com/k-saiki/mfa
-```
+- Download from [Release](https://github.com/k-saiki/mfa/releases/latest).
+- Unzip and move to the directory of PATH.
 
 ## Configuration
 Default config is `$HOME/.mfa/secrets` in yaml format.
