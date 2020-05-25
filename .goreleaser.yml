@@ -5,8 +5,15 @@ before:
   hooks:
     - go mod tidy
 builds:
-  - main: .
+  - main:
     binary: mfa
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - 386
     ldflags:
       - -s -w
       - -X github.com/k-saiki/mfa/cmd.version={{.Version}}
@@ -14,15 +21,13 @@ builds:
     env:
       - CGO_ENABLED=0
 archives:
-  - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+  - format: zip
+    name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
     replacements:
       darwin: darwin
       linux: linux
       windows: windows
       386: i386
       amd64: x86_64
-    format_overrides:
-      - goos: windows
-        format: zip
 release:
   prerelease: auto
