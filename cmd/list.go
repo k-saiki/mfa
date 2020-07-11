@@ -1,23 +1,21 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
-// listCmd represents the list command
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Print services",
+func NewListCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "list",
+		Short: "Print services",
+		Run: func(cmd *cobra.Command, args []string) {
+			LoadConfig()
 
-	Run: func(cmd *cobra.Command, args []string) {
-		for _, s := range config.Service {
-			fmt.Println(s.Name)
-		}
-	},
-}
+			for _, s := range config.Service {
+				cmd.Println(s.Name)
+			}
+		},
+	}
 
-func init() {
-	rootCmd.AddCommand(listCmd)
+	return cmd
 }

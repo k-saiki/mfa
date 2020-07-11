@@ -20,24 +20,35 @@ type Services struct {
 }
 
 var config Config
+var version string
+var revision string
 
-var rootCmd = &cobra.Command{
-	Use:   "mfa",
-	Short: "Generate a totp token with cli.",
+func NewCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "mfa",
+		Short: "Generate a totp token with cli.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
+	}
+
+	cmd.AddCommand(NewGenerateCommand())
+	cmd.AddCommand(NewListCommand())
+	cmd.AddCommand(NewVersionCommand())
+	return cmd
 }
 
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Printf("Error: %s\n", err)
+	cmd := NewCommand()
+	cmd.SetOutput(os.Stdout)
+	if err := cmd.Execute(); err != nil {
+		cmd.SetOutput(os.Stderr)
+		cmd.Println("Error:", err)
 		os.Exit(1)
 	}
 }
 
-func init() {
-	cobra.OnInitialize(initConfig)
-}
-
-func initConfig() {
+func LoadConfig() {
 	viper.SetConfigType("yaml")
 
 	if os.Getenv("MFA_CONFIG") != "" {
@@ -45,7 +56,7 @@ func initConfig() {
 	} else {
 		home, err := homedir.Dir()
 		if err != nil {
-			fmt.Printf("Error: %s\n", err)
+			fmt.Println("Error:", err)
 			os.Exit(1)
 		}
 
@@ -55,12 +66,12 @@ func initConfig() {
 	}
 
 	if err := viper.ReadInConfig(); err != nil {
-		fmt.Printf("Error: %s\n", err)
+		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
 
 	if err := viper.UnmarshalExact(&config); err != nil {
-		fmt.Printf("Error: %s\n", err)
+		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
 }

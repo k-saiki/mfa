@@ -6,14 +6,14 @@ Generate TOTP(Time-based One-time Password) token with CLI.
 - Unzip and move to the directory of PATH.
 
 ## Configuration
-Default config is `$HOME/.mfa/secrets` in yaml format.
+Default config file is `$HOME/.mfa/secrets.yml`  or `$HOME/.mfa/secrets.yaml` .
 ```yaml
 service:
-  - name: "amazon"
+  - name: amazon
     secret: "your secret key"
-  - name: "google"
+  - name: google
     secret: "your secret key"
-  - name: "github"
+  - name: github
     secret: "your secret key"
 ```
 
