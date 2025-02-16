@@ -1,3 +1,5 @@
+version: 2
+
 project_name: mfa
 env:
   - GO111MODULE=on
@@ -22,7 +24,7 @@ builds:
     env:
       - CGO_ENABLED=0
 archives:
-  - format: zip
+  - formats: [ 'zip' ]
     name_template: >-
       {{- .ProjectName }}_
       {{- title .Os }}_
