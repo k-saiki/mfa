@@ -22,7 +22,7 @@ builds:
     env:
       - CGO_ENABLED=0
 archives:
-  - format: zip
+  - formats: [ 'zip' ]
     name_template: >-
       {{- .ProjectName }}_
       {{- title .Os }}_
