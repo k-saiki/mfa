@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -54,7 +53,7 @@ func LoadConfig() {
 	if os.Getenv("MFA_CONFIG") != "" {
 		viper.SetConfigFile(os.Getenv("MFA_CONFIG"))
 	} else {
-		home, err := homedir.Dir()
+		home, err := os.UserHomeDir()
 		if err != nil {
 			fmt.Println("Error:", err)
 			os.Exit(1)
