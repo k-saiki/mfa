@@ -57,7 +57,3 @@ $ direnv allow
 direnv: loading .envrc
 direnv: export +AWS_ACCESS_KEY_ID +AWS_CREDENTIAL_EXPIRATION +AWS_DEFAULT_REGION +AWS_REGION +AWS_SECRET_ACCESS_KEY +AWS_SESSION_TOKEN
 ```
-
-## TODO
-
-- Add test

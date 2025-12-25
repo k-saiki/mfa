@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"os"
+	"fmt"
 	"time"
 
 	"github.com/pquerna/otp/totp"
@@ -15,19 +15,22 @@ func NewGenerateCommand() *cobra.Command {
 		Short: "Generate a totp token",
 		Args:  cobra.ExactArgs(1),
 
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			LoadConfig()
 			service := args[0]
 
 			for _, s := range config.Service {
 				if s.Name == service {
-					token, _ := totp.GenerateCode(s.Secret, time.Now())
+					token, err := totp.GenerateCode(s.Secret, time.Now())
+					if err != nil {
+						return fmt.Errorf("failed to generate token: %w", err)
+					}
 					cmd.Println(token)
-					os.Exit(0)
+					return nil
 				}
 			}
 
-			cmd.Printf("Error: %s not found in %s\n", service, viper.ConfigFileUsed())
+			return fmt.Errorf("%s not found in %s", service, viper.ConfigFileUsed())
 		},
 	}
 
