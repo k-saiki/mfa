@@ -6,19 +6,18 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	Service []Services
+	Service []Service `yaml:"service"`
 }
 
-type Services struct {
-	Name   string
-	Secret string
+type Service struct {
+	Name   string `yaml:"name"`
+	Secret string `yaml:"secret"`
 }
 
-var config Config
 var version string
 var revision string
 
@@ -47,30 +46,42 @@ func Execute() {
 	}
 }
 
-func LoadConfig() {
-	viper.SetConfigType("yaml")
+func getConfigPath() (string, error) {
+	if path := os.Getenv("MFA_CONFIG"); path != "" {
+		return path, nil
+	}
 
-	if os.Getenv("MFA_CONFIG") != "" {
-		viper.SetConfigFile(os.Getenv("MFA_CONFIG"))
-	} else {
-		home, err := os.UserHomeDir()
-		if err != nil {
-			fmt.Println("Error:", err)
-			os.Exit(1)
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("failed to get home directory: %w", err)
+	}
+
+	// Try .yml first, then .yaml
+	for _, ext := range []string{".yml", ".yaml"} {
+		path := filepath.Join(home, ".mfa", "secrets"+ext)
+		if _, err := os.Stat(path); err == nil {
+			return path, nil
 		}
-
-		configPath := filepath.Join(home, ".mfa")
-		viper.AddConfigPath(configPath)
-		viper.SetConfigName("secrets")
 	}
 
-	if err := viper.ReadInConfig(); err != nil {
-		fmt.Println("Error:", err)
-		os.Exit(1)
+	return filepath.Join(home, ".mfa", "secrets.yml"), nil
+}
+
+func LoadConfig() (*Config, string, error) {
+	configPath, err := getConfigPath()
+	if err != nil {
+		return nil, "", err
 	}
 
-	if err := viper.UnmarshalExact(&config); err != nil {
-		fmt.Println("Error:", err)
-		os.Exit(1)
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		return nil, configPath, fmt.Errorf("failed to read config file: %w", err)
 	}
+
+	var config Config
+	if err := yaml.Unmarshal(data, &config); err != nil {
+		return nil, configPath, fmt.Errorf("failed to parse config file: %w", err)
+	}
+
+	return &config, configPath, nil
 }

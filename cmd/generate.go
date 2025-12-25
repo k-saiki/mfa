@@ -6,7 +6,6 @@ import (
 
 	"github.com/pquerna/otp/totp"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func NewGenerateCommand() *cobra.Command {
@@ -16,7 +15,11 @@ func NewGenerateCommand() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			LoadConfig()
+			config, configPath, err := LoadConfig()
+			if err != nil {
+				return err
+			}
+
 			service := args[0]
 
 			for _, s := range config.Service {
@@ -30,7 +33,7 @@ func NewGenerateCommand() *cobra.Command {
 				}
 			}
 
-			return fmt.Errorf("%s not found in %s", service, viper.ConfigFileUsed())
+			return fmt.Errorf("%s not found in %s", service, configPath)
 		},
 	}
 

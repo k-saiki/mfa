@@ -8,12 +8,16 @@ func NewListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Print services",
-		Run: func(cmd *cobra.Command, args []string) {
-			LoadConfig()
+		RunE: func(cmd *cobra.Command, args []string) error {
+			config, _, err := LoadConfig()
+			if err != nil {
+				return err
+			}
 
 			for _, s := range config.Service {
 				cmd.Println(s.Name)
 			}
+			return nil
 		},
 	}
 
