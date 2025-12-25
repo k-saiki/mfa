@@ -32,8 +32,6 @@ func TestListCommand_PrintsServices(t *testing.T) {
 	os.Setenv("MFA_CONFIG", configPath)
 	defer os.Setenv("MFA_CONFIG", originalEnv)
 
-	config = Config{}
-
 	cmd := NewCommand()
 	buf := new(bytes.Buffer)
 	cmd.SetOut(buf)
@@ -53,4 +51,3 @@ func TestListCommand_PrintsServices(t *testing.T) {
 		}
 	}
 }
-

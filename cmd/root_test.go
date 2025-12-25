@@ -28,9 +28,10 @@ func TestLoadConfig(t *testing.T) {
 	os.Setenv("MFA_CONFIG", configPath)
 	defer os.Setenv("MFA_CONFIG", originalEnv)
 
-	config = Config{}
-
-	LoadConfig()
+	config, _, err := LoadConfig()
+	if err != nil {
+		t.Fatalf("failed to load config: %v", err)
+	}
 
 	if len(config.Service) != 2 {
 		t.Fatalf("expected 2 services, got %d", len(config.Service))
@@ -46,5 +47,16 @@ func TestLoadConfig(t *testing.T) {
 
 	if config.Service[1].Name != "another-service" {
 		t.Errorf("expected second service name 'another-service', got '%s'", config.Service[1].Name)
+	}
+}
+
+func TestLoadConfig_FileNotFound(t *testing.T) {
+	originalEnv := os.Getenv("MFA_CONFIG")
+	os.Setenv("MFA_CONFIG", "/nonexistent/path/secrets.yml")
+	defer os.Setenv("MFA_CONFIG", originalEnv)
+
+	_, _, err := LoadConfig()
+	if err == nil {
+		t.Error("expected error for nonexistent config file")
 	}
 }

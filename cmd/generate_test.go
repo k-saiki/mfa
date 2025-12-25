@@ -30,8 +30,6 @@ func TestGenerateCommand_Success(t *testing.T) {
 	os.Setenv("MFA_CONFIG", configPath)
 	defer os.Setenv("MFA_CONFIG", originalEnv)
 
-	config = Config{}
-
 	cmd := NewCommand()
 	buf := new(bytes.Buffer)
 	cmd.SetOut(buf)
@@ -72,8 +70,6 @@ func TestGenerateCommand_ServiceNotFound(t *testing.T) {
 	os.Setenv("MFA_CONFIG", configPath)
 	defer os.Setenv("MFA_CONFIG", originalEnv)
 
-	config = Config{}
-
 	cmd := NewCommand()
 	buf := new(bytes.Buffer)
 	cmd.SetOut(buf)
@@ -109,8 +105,6 @@ func TestGenerateCommand_InvalidSecret(t *testing.T) {
 	originalEnv := os.Getenv("MFA_CONFIG")
 	os.Setenv("MFA_CONFIG", configPath)
 	defer os.Setenv("MFA_CONFIG", originalEnv)
-
-	config = Config{}
 
 	cmd := NewCommand()
 	buf := new(bytes.Buffer)

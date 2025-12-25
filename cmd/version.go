@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"fmt"
+	"io"
+
 	"github.com/spf13/cobra"
 )
 
@@ -9,15 +12,14 @@ func NewVersionCommand() *cobra.Command {
 		Use:   "version",
 		Short: "Print the version",
 		Run: func(cmd *cobra.Command, args []string) {
-			ShowVersion()
+			showVersion(cmd.OutOrStdout())
 		},
 	}
 
 	return cmd
 }
 
-func ShowVersion() {
-	cmd := &cobra.Command{}
-	cmd.Println("Version: ", version)
-	cmd.Println("Revision: ", revision)
+func showVersion(w io.Writer) {
+	fmt.Fprintln(w, "Version:", version)
+	fmt.Fprintln(w, "Revision:", revision)
 }
