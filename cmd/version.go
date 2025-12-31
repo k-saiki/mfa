@@ -20,6 +20,6 @@ func NewVersionCommand() *cobra.Command {
 }
 
 func showVersion(w io.Writer) {
-	fmt.Fprintln(w, "Version:", version)
-	fmt.Fprintln(w, "Revision:", revision)
+	_, _ = fmt.Fprintln(w, "Version:", version)
+	_, _ = fmt.Fprintln(w, "Revision:", revision)
 }

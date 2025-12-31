@@ -38,10 +38,10 @@ func NewCommand() *cobra.Command {
 
 func Execute() {
 	cmd := NewCommand()
-	cmd.SetOutput(os.Stdout)
+	cmd.SetOut(os.Stdout)
+	cmd.SetErr(os.Stderr)
 	if err := cmd.Execute(); err != nil {
-		cmd.SetOutput(os.Stderr)
-		cmd.Println("Error:", err)
+		_, _ = fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}
 }

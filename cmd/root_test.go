@@ -7,11 +7,7 @@ import (
 )
 
 func TestLoadConfig(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "mfa-test")
-	if err != nil {
-		t.Fatalf("failed to create temp dir: %v", err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir := t.TempDir()
 
 	configContent := `service:
   - name: test-service
@@ -24,9 +20,7 @@ func TestLoadConfig(t *testing.T) {
 		t.Fatalf("failed to write config file: %v", err)
 	}
 
-	originalEnv := os.Getenv("MFA_CONFIG")
-	os.Setenv("MFA_CONFIG", configPath)
-	defer os.Setenv("MFA_CONFIG", originalEnv)
+	t.Setenv("MFA_CONFIG", configPath)
 
 	config, _, err := LoadConfig()
 	if err != nil {
@@ -51,9 +45,7 @@ func TestLoadConfig(t *testing.T) {
 }
 
 func TestLoadConfig_FileNotFound(t *testing.T) {
-	originalEnv := os.Getenv("MFA_CONFIG")
-	os.Setenv("MFA_CONFIG", "/nonexistent/path/secrets.yml")
-	defer os.Setenv("MFA_CONFIG", originalEnv)
+	t.Setenv("MFA_CONFIG", "/nonexistent/path/secrets.yml")
 
 	_, _, err := LoadConfig()
 	if err == nil {
