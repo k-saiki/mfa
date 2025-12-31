@@ -9,11 +9,7 @@ import (
 )
 
 func TestListCommand_PrintsServices(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "mfa-test")
-	if err != nil {
-		t.Fatalf("failed to create temp dir: %v", err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir := t.TempDir()
 
 	configContent := `service:
   - name: amazon
@@ -28,16 +24,14 @@ func TestListCommand_PrintsServices(t *testing.T) {
 		t.Fatalf("failed to write config file: %v", err)
 	}
 
-	originalEnv := os.Getenv("MFA_CONFIG")
-	os.Setenv("MFA_CONFIG", configPath)
-	defer os.Setenv("MFA_CONFIG", originalEnv)
+	t.Setenv("MFA_CONFIG", configPath)
 
 	cmd := NewCommand()
 	buf := new(bytes.Buffer)
 	cmd.SetOut(buf)
 	cmd.SetArgs([]string{"list"})
 
-	err = cmd.Execute()
+	err := cmd.Execute()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

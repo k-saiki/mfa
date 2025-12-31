@@ -10,11 +10,7 @@ import (
 )
 
 func TestGenerateCommand_Success(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "mfa-test")
-	if err != nil {
-		t.Fatalf("failed to create temp dir: %v", err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir := t.TempDir()
 
 	// JBSWY3DPEHPK3PXP is a valid base32 encoded secret
 	configContent := `service:
@@ -26,9 +22,7 @@ func TestGenerateCommand_Success(t *testing.T) {
 		t.Fatalf("failed to write config file: %v", err)
 	}
 
-	originalEnv := os.Getenv("MFA_CONFIG")
-	os.Setenv("MFA_CONFIG", configPath)
-	defer os.Setenv("MFA_CONFIG", originalEnv)
+	t.Setenv("MFA_CONFIG", configPath)
 
 	cmd := NewCommand()
 	buf := new(bytes.Buffer)
@@ -36,7 +30,7 @@ func TestGenerateCommand_Success(t *testing.T) {
 	cmd.SetErr(buf)
 	cmd.SetArgs([]string{"gen", "test-service"})
 
-	err = cmd.Execute()
+	err := cmd.Execute()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -51,11 +45,7 @@ func TestGenerateCommand_Success(t *testing.T) {
 }
 
 func TestGenerateCommand_ServiceNotFound(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "mfa-test")
-	if err != nil {
-		t.Fatalf("failed to create temp dir: %v", err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir := t.TempDir()
 
 	configContent := `service:
   - name: existing-service
@@ -66,9 +56,7 @@ func TestGenerateCommand_ServiceNotFound(t *testing.T) {
 		t.Fatalf("failed to write config file: %v", err)
 	}
 
-	originalEnv := os.Getenv("MFA_CONFIG")
-	os.Setenv("MFA_CONFIG", configPath)
-	defer os.Setenv("MFA_CONFIG", originalEnv)
+	t.Setenv("MFA_CONFIG", configPath)
 
 	cmd := NewCommand()
 	buf := new(bytes.Buffer)
@@ -76,7 +64,7 @@ func TestGenerateCommand_ServiceNotFound(t *testing.T) {
 	cmd.SetErr(buf)
 	cmd.SetArgs([]string{"gen", "nonexistent-service"})
 
-	err = cmd.Execute()
+	err := cmd.Execute()
 	if err == nil {
 		t.Error("expected error for nonexistent service")
 	}
@@ -87,11 +75,7 @@ func TestGenerateCommand_ServiceNotFound(t *testing.T) {
 }
 
 func TestGenerateCommand_InvalidSecret(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "mfa-test")
-	if err != nil {
-		t.Fatalf("failed to create temp dir: %v", err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir := t.TempDir()
 
 	configContent := `service:
   - name: invalid-service
@@ -102,9 +86,7 @@ func TestGenerateCommand_InvalidSecret(t *testing.T) {
 		t.Fatalf("failed to write config file: %v", err)
 	}
 
-	originalEnv := os.Getenv("MFA_CONFIG")
-	os.Setenv("MFA_CONFIG", configPath)
-	defer os.Setenv("MFA_CONFIG", originalEnv)
+	t.Setenv("MFA_CONFIG", configPath)
 
 	cmd := NewCommand()
 	buf := new(bytes.Buffer)
@@ -112,7 +94,7 @@ func TestGenerateCommand_InvalidSecret(t *testing.T) {
 	cmd.SetErr(buf)
 	cmd.SetArgs([]string{"gen", "invalid-service"})
 
-	err = cmd.Execute()
+	err := cmd.Execute()
 	if err == nil {
 		t.Error("expected error for invalid secret")
 	}
