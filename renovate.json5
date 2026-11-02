@@ -3,7 +3,7 @@
   configMigration: true,
   extends: [
     'config:best-practices',
-    'github>aquaproj/aqua-renovate-config#2.13.0',
+    'github>aquaproj/aqua-renovate-config#2.14.0',
   ],
   packageRules: [
     {
